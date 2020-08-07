@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.keith.test.boottest.mapper.LogisticsServiceMapper">
+    <resultMap type="com.keith.test.boottest.entity.LogisticsService" id="logisticsServiceResultMap">
+        <result column="id"  property="id"/>
+        <result column="service_code"  property="serviceCode"/>
+        <result column="provider_code"  property="providerCode"/>
+        <result column="warehouse_code"  property="warehouseCode"/>
+        <result column="service_type_code"  property="serviceTypeCode"/>
+        <result column="standard_service_code"  property="standardServiceCode"/>
+        <result column="is_support_api"  property="isSupportApi"/>
+        <result column="audit_code"  property="auditCode"/>
+        <result column="audit_status"  property="auditStatus"/>
+        <result column="audit_status_comment"  property="auditStatusComment"/>
+        <result column="lang"  property="lang"/>
+        <result column="logo"  property="logo"/>
+        <result column="service_name"  property="serviceName"/>
+        <result column="local_carrier"  property="localCarrier"/>
+        <result column="track_page"  property="trackPage"/>
+        <result column="contact"  property="contact"/>
+        <result column="restricted_goods"  property="restrictedGoods"/>
+        <result column="feature"  property="feature"/>
+        <result column="min_time_in_transit"  property="minTimeInTransit"/>
+        <result column="max_time_in_transit"  property="maxTimeInTransit"/>
+        <result column="valid"  property="valid"/>
+        <result column="premium_rate"  property="premiumRate"/>
+        <result column="min_insured_amount"  property="minInsuredAmount"/>
+        <result column="max_insured_amount"  property="maxInsuredAmount"/>
+        <result column="profit_rate"  property="profitRate"/>
+        <result column="dimensional_param"  property="dimensionalParam"/>
+        <result column="weight_high_limit"  property="weightHighLimit"/>
+        <result column="weight_low_limit"  property="weightLowLimit"/>
+        <result column="is_tariff_cover"  property="isTariffCover"/>
+        <result column="is_support_ddu"  property="isSupportDdu"/>
+        <result column="is_support_ddp"  property="isSupportDdp"/>
+        <result column="sort_num"  property="sortNum"/>
+        <result column="create_time"  property="createTime"/>
+        <result column="update_time"  property="updateTime"/>
+        <result column="del_flag"  property="delFlag"/>
+        <result column="data_code"  property="dataCode"/>
+        <result column="create_by"  property="createBy"/>
+        <result column="update_by"  property="updateBy"/>
+    </resultMap>
+
+
+    <sql id="baseColumnList">
+        id,
+        service_code,
+        provider_code,
+        warehouse_code,
+        service_type_code,
+        template_code,
+        standard_service_code,
+        standard_service_name,
+        provider_route_code,
+        is_support_api,
+        audit_code,
+        audit_status,
+        audit_status_comment,
+        lang,
+        logo,
+        service_name,
+        local_carrier,
+        track_page,
+        contact,
+        restricted_goods,
+        feature,
+        is_declaration,
+        declare_currency_code,
+        declare_num,
+        declare_forbid_name,
+        tag,
+        min_time_in_transit,
+        max_time_in_transit,
+        status,
+        is_show,
+        cooperation_type,
+        valid,
+        premium_rate,
+        min_insured_amount,
+        max_insured_amount,
+        charged_type,
+        charged_side_limit,
+        charged_weight_limit,
+        dimensional_param,
+        weight_high_limit,
+        weight_low_limit,
+        is_tariff_cover,
+        is_support_ddu,
+        is_support_ddp,
+        is_support_more_part,
+        print_type,
+        version,
+        create_time,
+        update_time,
+        del_flag,
+        data_code,
+        create_by,
+        update_by
+    </sql>
+
+    <select id="listAllLogisticsService" resultMap="logisticsServiceResultMap">
+        select <include refid="baseColumnList"/> from pw_logistics_service
+        where lang = 'zh';
+    </select>
+</mapper>
