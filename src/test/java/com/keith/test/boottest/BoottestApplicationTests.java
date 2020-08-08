@@ -1,7 +1,9 @@
 package com.keith.test.boottest;
 
 import cn.afterturn.easypoi.excel.ExcelExportUtil;
+import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
+import cn.afterturn.easypoi.excel.entity.ImportParams;
 import com.keith.test.boottest.entity.LogisticsService;
 import com.keith.test.boottest.mapper.LogisticsServiceMapper;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -11,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
@@ -65,6 +69,20 @@ public class BoottestApplicationTests {
         Workbook workbook = ExcelExportUtil.exportExcel(params, exportClass, exportCollection);
         workbook.write(outputStream);
         outputStream.close();
+    }
+
+    @Test
+    public void inputExcel() throws FileNotFoundException {
+        String url = "E:\\WORKSPACE\\物流路径X.xls";
+
+        File file = new File(url);
+
+        ImportParams importParams = new ImportParams();
+        importParams.setHeadRows(1);
+
+        List<LogisticsService> list = ExcelImportUtil.importExcel(file, LogisticsService.class, importParams);
+
+        list.stream().forEach(System.out::println);
     }
 
 }
