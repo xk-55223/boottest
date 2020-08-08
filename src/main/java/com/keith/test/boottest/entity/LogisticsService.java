@@ -1,5 +1,6 @@
 package com.keith.test.boottest.entity;
 
+import cn.afterturn.easypoi.excel.annotation.Excel;
 import com.keith.test.boottest.enums.LanguageEnum;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,6 +19,7 @@ public class LogisticsService extends BaseEntity {
     /**
      * 服务代码
      */
+    @Excel(name = "渠道编码", width = 30)
     private String serviceCode;
     /**
      * 供应商编码
@@ -54,6 +56,7 @@ public class LogisticsService extends BaseEntity {
     /**
      * 语言类型：zh中文，en英文
      */
+    @Excel(name = "语言", width = 30)
     private LanguageEnum lang;
     /**
      * 物流产品logo
@@ -62,6 +65,7 @@ public class LogisticsService extends BaseEntity {
     /**
      * 中文名
      */
+    @Excel(name = "渠道名", width = 30)
     private String serviceName;
     /**
      * 当地承运商
