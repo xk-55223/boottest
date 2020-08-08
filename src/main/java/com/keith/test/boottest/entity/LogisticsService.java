@@ -143,4 +143,12 @@ public class LogisticsService extends BaseEntity {
      */
     private Integer sortNum;
 
+    @Override
+    public String toString() {
+        return "LogisticsService{" +
+                "serviceCode='" + serviceCode + '\'' +
+                ", lang='" + lang + '\'' +
+                ", serviceName='" + serviceName + '\'' +
+                '}';
+    }
 }

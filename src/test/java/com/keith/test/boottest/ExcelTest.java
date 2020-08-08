@@ -14,17 +14,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Excel测试类
+ */
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class BoottestApplicationTests {
+public class ExcelTest {
     @Autowired
     LogisticsServiceMapper logisticsServiceMapper;
 
+    /**
+     * 导出excel测试(.xlsx)
+     * @throws IOException IO异常
+     */
     @Test
     public void exportXlsx() throws IOException {
         List<LogisticsService> logisticsServices = logisticsServiceMapper.listAllLogisticsService();
@@ -41,11 +47,11 @@ public class BoottestApplicationTests {
     }
 
     /**
-     * 导出数据
-     * @param params
-     * @param exportUrl
-     * @param exportCollection
-     * @param exportClass
+     * 导出excel测试(.xls)
+     * @param params            标题和表名数据
+     * @param exportUrl         导出磁盘地址
+     * @param exportCollection  导出集合
+     * @param exportClass       导出类
      */
     private void exportXlsx(ExportParams params, String exportUrl, List<?> exportCollection, Class<?> exportClass) throws IOException {
         FileOutputStream outputStream = new FileOutputStream(exportUrl);
@@ -58,12 +64,12 @@ public class BoottestApplicationTests {
 
     /**
      * 导出数据
-     * @param params
-     * @param exportUrl
-     * @param exportCollection
-     * @param exportClass
+     * @param params            标题和表名数据
+     * @param exportUrl         导出磁盘地址
+     * @param exportCollection  导出集合
+     * @param exportClass       导出类
      */
-    private void exportXls(ExportParams params, String exportUrl, List<?> exportCollection, Class<?> exportClass) throws IOException {
+    private <T> void exportXls(ExportParams params, String exportUrl, List<T> exportCollection, Class<T> exportClass) throws IOException {
         FileOutputStream outputStream = new FileOutputStream(exportUrl);
 
         Workbook workbook = ExcelExportUtil.exportExcel(params, exportClass, exportCollection);
@@ -71,18 +77,33 @@ public class BoottestApplicationTests {
         outputStream.close();
     }
 
+    /**
+     * 导入测试
+     */
     @Test
-    public void inputExcel() throws FileNotFoundException {
+    public void inputExcel() {
         String url = "E:\\WORKSPACE\\物流路径X.xls";
 
+        List<LogisticsService> logisticsServices = importExcel(url, 1, LogisticsService.class);
+
+        logisticsServices.forEach(System.out :: println);
+    }
+
+    /**
+     * 导入工具
+     * @param url           磁盘地址
+     * @param headRow       属性名行号
+     * @param importClass   接受类
+     * @param <T>           泛型
+     * @return              集合
+     */
+    private <T> List<T> importExcel(String url, int headRow, Class<T> importClass) {
         File file = new File(url);
 
         ImportParams importParams = new ImportParams();
-        importParams.setHeadRows(1);
+        importParams.setHeadRows(headRow);
 
-        List<LogisticsService> list = ExcelImportUtil.importExcel(file, LogisticsService.class, importParams);
-
-        list.stream().forEach(System.out::println);
+        return ExcelImportUtil.importExcel(file, importClass, importParams);
     }
 
 }
