@@ -1,26 +1,35 @@
 package com.keith.test.boottest.service.impl;
 
+import com.keith.test.boottest.entity.Help;
 import com.keith.test.boottest.entity.LogisticsService;
+import com.keith.test.boottest.mapper.HelpMapper;
 import com.keith.test.boottest.mapper.LogisticsServiceMapper;
 import com.keith.test.boottest.service.LogisticsServiceService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
 @Service
+@Slf4j
 public class LogisticsServiceServiceImpl implements LogisticsServiceService {
     @Autowired
     LogisticsServiceMapper logisticsServiceMapper;
+
+    @Autowired
+    HelpMapper helpMapper;
 
 
     @Override
@@ -79,6 +88,47 @@ public class LogisticsServiceServiceImpl implements LogisticsServiceService {
                 enTimeStandardCell.setCellValue(i + ".english time standard");
             }
             FileOutputStream outputStream = new FileOutputStream("E:/WORKSPACE/compensationDescription.xlsx");
+            sheets.write(outputStream);
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void writeHelpToExcel() {
+        List<Help> helps = helpMapper.listAllHelp();
+        InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("excelTemplate/帮助中心APP.xlsx");
+        try {
+            XSSFWorkbook sheets = new XSSFWorkbook(resourceAsStream);
+            resourceAsStream.close();
+            sheets.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+            XSSFSheet sheet = sheets.getSheetAt(0);
+
+            for (int i = 0; i < helps.size(); i++) {
+                Help help = helps.get(i);
+                XSSFRow row = sheet.createRow(i + 1);
+                String helpContent = help.getHelpContent();
+                if (helpContent.length() > 32700) {
+                    /*for (int j = 0; j < helpContent.length() / 30000; j++) {
+                        XSSFCell cellj = row.getCell(j + 2);
+                        cellj.setCellValue(helpContent.substring(30000 * j, 30000 * (j + 1)));
+                    }*/
+                    FileOutputStream outputStream = new FileOutputStream("D:\\WorkSpace\\帮助id" + help.getHelpId() + ".html");
+                    outputStream.write(help.getHelpContent().getBytes());
+                    outputStream.flush();
+                    outputStream.close();
+                    log.info("帮助id：{}", help.getHelpId());
+                } else {
+                    XSSFCell cell = row.getCell(0);
+                    XSSFCell cell1 = row.getCell(1);
+                    XSSFCell cell2 = row.getCell(2);
+                    cell.setCellValue(help.getHelpId());
+                    cell1.setCellValue(help.getHelpTitle());
+                    cell2.setCellValue(helpContent);
+                }
+            }
+            FileOutputStream outputStream = new FileOutputStream("D:\\WorkSpace\\帮助中心APP.xlsx");
             sheets.write(outputStream);
             outputStream.close();
         } catch (IOException e) {

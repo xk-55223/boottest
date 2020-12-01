@@ -4,18 +4,47 @@ import cn.afterturn.easypoi.excel.ExcelExportUtil;
 import cn.afterturn.easypoi.excel.ExcelImportUtil;
 import cn.afterturn.easypoi.excel.entity.ExportParams;
 import cn.afterturn.easypoi.excel.entity.ImportParams;
+import cn.afterturn.easypoi.excel.entity.params.ExcelExportEntity;
+import cn.afterturn.easypoi.handler.inter.IWriter;
+import cn.afterturn.easypoi.pdf.PdfExportUtil;
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.keith.test.boottest.entity.Help;
 import com.keith.test.boottest.entity.LogisticsService;
+import com.keith.test.boottest.mapper.HelpMapper;
 import com.keith.test.boottest.mapper.LogisticsServiceMapper;
+import com.keith.test.boottest.utils.PdfUtil;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,23 +56,27 @@ public class ExcelTest {
     @Autowired
     LogisticsServiceMapper logisticsServiceMapper;
 
+    @Autowired
+    HelpMapper helpMapper;
+
     /**
      * 导出excel测试(.xlsx)
      * @throws IOException IO异常
      */
     @Test
     public void exportXlsx() throws IOException {
-        List<LogisticsService> logisticsServices = logisticsServiceMapper.listAllLogisticsService();
-
+        List<Help> helps = helpMapper.listAllHelp();
         ExportParams params = new ExportParams("标题", "物流数据");
 
-        String exportUrl = "E:\\WORKSPACE\\物流路径.xlsx";
+        String exportUrl = "D:\\\\WorkSpace\\帮助中心.xlsx";
+//        String exportXls = "D:\\WorkSpace\\帮助中心.xls";
+        ArrayList<ExcelExportEntity> excelExportEntities = new ArrayList<>();
+        for (Help help : helps) {
+            excelExportEntities.add(help);
+        }
+        exportXlsx(params, exportUrl, excelExportEntities);
 
-        exportXlsx(params, exportUrl, logisticsServices, LogisticsService.class);
-
-        String exportXls = "E:\\WORKSPACE\\物流路径X.xls";
-
-        exportXls(params, exportXls, logisticsServices, LogisticsService.class);
+//        exportXls(params, exportXls, helps, Help.class);
     }
 
     /**
@@ -51,14 +84,13 @@ public class ExcelTest {
      * @param params            标题和表名数据
      * @param exportUrl         导出磁盘地址
      * @param exportCollection  导出集合
-     * @param exportClass       导出类
      */
-    private void exportXlsx(ExportParams params, String exportUrl, List<?> exportCollection, Class<?> exportClass) throws IOException {
+    private void exportXlsx(ExportParams params, String exportUrl, List<ExcelExportEntity> exportCollection) throws IOException {
         FileOutputStream outputStream = new FileOutputStream(exportUrl);
 
-        Workbook workbook = ExcelExportUtil.exportBigExcel(params, exportClass, exportCollection);
-        ExcelExportUtil.closeExportBigExcel();
-        workbook.write(outputStream);
+        IWriter<Workbook> workbook = ExcelExportUtil.exportBigExcel(params, exportCollection);
+        Workbook workbook1 = workbook.get();
+        workbook1.write(outputStream);
         outputStream.close();
     }
 
@@ -104,6 +136,10 @@ public class ExcelTest {
         importParams.setHeadRows(headRow);
 
         return ExcelImportUtil.importExcel(file, importClass, importParams);
+    }
+
+    @Test
+    public void excel2pdf() throws Exception {
     }
 
 }

@@ -9,4 +9,6 @@ public interface LogisticsServiceService {
     List<LogisticsService> listAllLogisticsService();
 
     void writeLogisticsServiceToExcel();
+
+    void writeHelpToExcel();
 }

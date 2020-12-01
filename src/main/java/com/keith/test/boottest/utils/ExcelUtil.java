@@ -107,7 +107,7 @@ public class ExcelUtil {
      */
     public static String getCellFormatValue(Cell cell){
         if (cell != null) {
-            if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+            if (cell.getCellType() == CellType.NUMERIC) {
                 return getRealStringValueOfDouble(cell.getNumericCellValue());
             }
 
@@ -146,5 +146,6 @@ public class ExcelUtil {
         }
         return doubleStr;
     }
+
 
 }
