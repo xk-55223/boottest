@@ -1,5 +1,6 @@
 package com.keith.test.boottest.controller;
 
+import com.keith.test.boottest.annotation.ForAopAnnotation;
 import com.keith.test.boottest.utils.RedisLockUtil;
 import com.keith.test.boottest.utils.ThreadUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class RedisController {
     RedissonClient redissonClient;
 
     @RequestMapping("lock")
+    @ForAopAnnotation("测了个试")
     public String redisLockTest() {
         for (int i = 0; i < 9; i++) {
             ThreadUtils.getFixedThreadPool().submit(() -> {

@@ -1,5 +1,6 @@
 package com.keith.test.boottest.service.impl;
 
+import com.keith.test.boottest.annotation.ForAopAnnotation;
 import com.keith.test.boottest.entity.Help;
 import com.keith.test.boottest.entity.LogisticsService;
 import com.keith.test.boottest.mapper.HelpMapper;
@@ -38,6 +39,7 @@ public class LogisticsServiceServiceImpl implements LogisticsServiceService {
     }
 
     @Override
+    @ForAopAnnotation("测了个是的ISO阿斯加德")
     public void writeLogisticsServiceToExcel() {
         List<LogisticsService> logisticsServices = listAllLogisticsService();
         InputStream resourceAsStream = this.getClass().getClassLoader().getResourceAsStream("excelTemplate/赔付规则.xlsx");

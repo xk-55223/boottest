@@ -19,8 +19,10 @@ import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.keith.test.boottest.entity.Help;
 import com.keith.test.boottest.entity.LogisticsService;
+import com.keith.test.boottest.entity.ProductExist;
 import com.keith.test.boottest.mapper.HelpMapper;
 import com.keith.test.boottest.mapper.LogisticsServiceMapper;
+import com.keith.test.boottest.utils.HttpClientUtil;
 import com.keith.test.boottest.utils.PdfUtil;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -40,12 +42,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * Excel测试类
@@ -113,12 +118,37 @@ public class ExcelTest {
      * 导入测试
      */
     @Test
-    public void inputExcel() {
-        String url = "E:\\WORKSPACE\\物流路径X.xls";
+    public void inputExcel() throws IOException {
+        String url = "C:\\Users\\26914\\Desktop\\文档\\抓取相关\\商品不存在判断--2021-01-06.xlsx";
+        String txtUrl = "C:\\Users\\26914\\Desktop\\文档\\抓取相关\\商品链接.txt";
 
-        List<LogisticsService> logisticsServices = importExcel(url, 1, LogisticsService.class);
+//        List<LogisticsService> logisticsServices = importExcel(url, 1, LogisticsService.class);
+        List<ProductExist> productExistList = importExcel(url, 1, ProductExist.class);
+        List<String> linkList = productExistList.stream().map(i -> getUrl(i.getPlatform(), i.getGoodsCode())).filter(Objects::nonNull).collect(Collectors.toList());
+        FileOutputStream fileOutputStream = new FileOutputStream(txtUrl);
+        for (String s : linkList) {
+            fileOutputStream.write(s.getBytes());
+            fileOutputStream.write(",\n".getBytes());
+            fileOutputStream.flush();
+        }
+    }
 
-        logisticsServices.forEach(System.out :: println);
+    /**
+     * 根据商品id获取淘宝的链接
+     *
+     * @param id 商品id
+     * @return 链接
+     */
+    private String getUrl(String platform, String id) {
+        if ("TB".equalsIgnoreCase(platform)) {
+            return "https://item.taobao.com/item.htm?id=" + id;
+        }
+
+        if ("TMALL".equalsIgnoreCase(platform)) {
+            return "https://detail.tmall.com/item.htm?id=" + id;
+        }
+
+        return null;
     }
 
     /**
