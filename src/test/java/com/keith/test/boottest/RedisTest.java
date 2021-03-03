@@ -105,9 +105,11 @@ public class RedisTest {
 
     @Test
     public void redisTest() {
+        long startTime = System.currentTimeMillis();
         valueOperations.set("test100", "测试10000");
+        long timeMillis = System.currentTimeMillis();
         String test100 = valueOperations.get("test100");
-        System.out.println("result = " + test100);
+        log.info("cost:{}, result: {}", System.currentTimeMillis() - timeMillis, test100);
     }
 
     @Test

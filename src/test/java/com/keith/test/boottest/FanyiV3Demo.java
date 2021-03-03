@@ -25,7 +25,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 
-public class FanyiV3Demo {
+public class  FanyiV3Demo {
 
     private static Logger logger = LoggerFactory.getLogger(FanyiV3Demo.class);
 
@@ -38,10 +38,10 @@ public class FanyiV3Demo {
     public static void main(String[] args) throws Exception {
 
         Map<String,Object> params = new HashMap<>();
-        String q = "定制夏季公司广告衫全棉短袖圆领印花T恤团体广告衫促销t-shirt";
+        String q = "Customization summer company advertising shirt all-cotton short sleeve round neck printed T-shirt group advertising shirt promotion T-shirt";
         String salt = String.valueOf(System.currentTimeMillis());
-        params.put("from", "zh-CHS");
-        params.put("to", "en");
+        params.put("from", "auto");
+        params.put("to", "auto");
         params.put("signType", "v3");
         String currTime = String.valueOf(System.currentTimeMillis() / 1000);
         params.put("curtime", currTime);
@@ -53,12 +53,11 @@ public class FanyiV3Demo {
         params.put("sign", sign);
 //        params.put("vocabId","您的用户词表ID");
         /** 处理结果 */
-        String result = HttpClientUtil.httpsPost(YOUDAO_URL, new HashMap<>(), params, ContentType.APPLICATION_FORM_URLENCODED.getMimeType(), null);
+        String result = HttpClientUtil.httpsPost(YOUDAO_URL, null, params, ContentType.APPLICATION_FORM_URLENCODED.getMimeType(), null);
         JSONObject resultJson = JSON.parseObject(result);
         JSONArray translation = resultJson.getJSONArray("translation");
         System.out.println(translation.get(0).toString());
 
-//        requestForHttp(YOUDAO_URL,params);
     }
 
     public static void requestForHttp(String url,Map<String,String> params) throws IOException {
@@ -168,7 +167,6 @@ public class FanyiV3Demo {
             return null;
         }
         int len = q.length();
-        String result;
         return len <= 20 ? q : (q.substring(0, 10) + len + q.substring(len - 10, len));
     }
 }

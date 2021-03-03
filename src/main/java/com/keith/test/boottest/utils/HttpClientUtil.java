@@ -2,6 +2,7 @@ package com.keith.test.boottest.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.CookieStore;
@@ -34,6 +35,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -268,6 +270,16 @@ public class HttpClientUtil {
             }
         }
         return resultStr;
+    }
+
+    public static void main(String[] args) throws Exception {
+        HashMap<String, String> header = new HashMap<>();
+        header.put("Cookie", "sc_g_cfg_f=sc_b_currency=CNY&sc_b_locale=en_US; Path=/; Domain=.alibaba.com; ");
+        String result = httpGet("https://chinese.alibaba.com/product-detail/MEN-S-100-COTTON-ORGANIC-T-1600171135687.html", header, null);
+        String parse = StringUtils.extractString(result, "window._PAGE_SCHEMA_ = (.*);", 1);
+        JSONObject jsonObject = JSON.parseObject(parse);
+
+        System.out.println(result);
     }
 
 }

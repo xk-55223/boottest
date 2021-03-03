@@ -1,13 +1,11 @@
 package com.keith.test.boottest.controller;
 
-import com.itextpdf.text.pdf.PdfWriter;
 import com.keith.test.boottest.entity.LogisticsService;
 import com.keith.test.boottest.service.ExcelService;
 import com.keith.test.boottest.service.LogisticsServiceService;
 import com.keith.test.boottest.utils.HttpClientUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.utils.DateUtils;
-import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Base64Utils;

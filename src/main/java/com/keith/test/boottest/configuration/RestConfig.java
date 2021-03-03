@@ -5,23 +5,20 @@ import com.mongodb.client.MongoClients;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.web.client.RestTemplate;
 
 /**
- * mongo配置
+ * rest配置
  *
  * @author keith
  * @since 2021-01-07
  */
 @Configuration
-public class MongoConfig {
+public class RestConfig {
 
     @Bean
-    public MongoClient mongoClient() {
-        return MongoClients.create("mongodb://192.168.0.54:28941");
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 
-    @Bean
-    public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(mongoClient(), "dotdotbuy");
-    }
 }

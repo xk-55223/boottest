@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.Base64Utils;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +18,15 @@ import java.util.Map;
 public class HttpTest {
 
     public static int index = 0;
+
+    @Autowired
+    RestTemplate restTemplate;
+
+    @Test
+    public void restTest() {
+        String forObject = restTemplate.getForObject("https://item.taobao.com/item.htm?spm=a230r.1.14.45.516a2262gi51bP&id=599269056085&ns=1&abbucket=17#detail", String.class);
+        System.out.println(forObject);
+    }
 
     @Test
     public void testHttp() throws Exception {

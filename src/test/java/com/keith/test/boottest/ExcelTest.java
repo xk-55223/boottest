@@ -17,6 +17,8 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.keith.test.boottest.dto.TranslateTemplate;
+import com.keith.test.boottest.dto.YouDaoLangTemplate;
 import com.keith.test.boottest.entity.Help;
 import com.keith.test.boottest.entity.LogisticsService;
 import com.keith.test.boottest.entity.ProductExist;
@@ -32,6 +34,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,6 +53,7 @@ import java.io.InputStream;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -119,18 +124,35 @@ public class ExcelTest {
      */
     @Test
     public void inputExcel() throws IOException {
-        String url = "C:\\Users\\26914\\Desktop\\文档\\抓取相关\\商品不存在判断--2021-01-06.xlsx";
-        String txtUrl = "C:\\Users\\26914\\Desktop\\文档\\抓取相关\\商品链接.txt";
+        String url = "C:\\Users\\26914\\Desktop\\文档\\翻译\\有道\\语言枚举.xlsx";
+        String txtUrl = "C:\\Users\\26914\\Desktop\\文档\\日语工作表.xlsx";
 
 //        List<LogisticsService> logisticsServices = importExcel(url, 1, LogisticsService.class);
-        List<ProductExist> productExistList = importExcel(url, 1, ProductExist.class);
-        List<String> linkList = productExistList.stream().map(i -> getUrl(i.getPlatform(), i.getGoodsCode())).filter(Objects::nonNull).collect(Collectors.toList());
-        FileOutputStream fileOutputStream = new FileOutputStream(txtUrl);
-        for (String s : linkList) {
-            fileOutputStream.write(s.getBytes());
-            fileOutputStream.write(",\n".getBytes());
-            fileOutputStream.flush();
+        //List<TranslateTemplate> translateTemplates = importExcel(url, 1, YouDaoLangTemplate.class);
+        List<YouDaoLangTemplate> translateTemplates = importExcel(url, 1, YouDaoLangTemplate.class);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (YouDaoLangTemplate translateTemplate : translateTemplates) {
+            stringBuilder.append(translateTemplate.getEnName().toUpperCase().replaceAll(" ", "_"));
+            stringBuilder.append("(\"").append(translateTemplate.getCode()).append("\", \"").append(translateTemplate.getCnName()).append("\"),\n");
         }
+
+        System.out.println(stringBuilder.toString());
+
+        //        Map<String, TranslateTemplate> map = translateTemplates.stream().collect(Collectors.toMap(TranslateTemplate::getSource, i -> i));
+        //        List<String> linkList = productExistList.stream().map(i -> getUrl(i.getPlatform(), i.getGoodsCode())).filter(Objects::nonNull).collect(Collectors.toList());
+        /*FileInputStream fileOutputStream = new FileInputStream(txtUrl);
+        XSSFWorkbook workbook = new XSSFWorkbook(fileOutputStream);
+        XSSFSheet sheetAt = workbook.getSheetAt(0);
+        int lastRowNum = sheetAt.getLastRowNum();
+        for (int i = 0; i <= lastRowNum; i++) {
+            XSSFRow row = sheetAt.getRow(i);
+            XSSFCell cell = row.getCell(0);
+            TranslateTemplate template = map.get(cell.getStringCellValue());
+            String result = template == null ? cell.getStringCellValue() : template.getTarget();
+            cell.setCellValue(result);
+        }*/
+
+        //workbook.write(new FileOutputStream(txtUrl));
     }
 
     /**
