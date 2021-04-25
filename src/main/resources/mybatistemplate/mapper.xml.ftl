@@ -15,13 +15,13 @@
                     <id column="${field.name}" property="${field.propertyName}"/>
                 </#if>
             </#list>
-            <#list table.commonFields as field><#--生成公共字段 -->
-                <result column="${field.name}" property="${field.propertyName}"/>
-            </#list>
             <#list table.fields as field>
                 <#if !field.keyFlag><#--生成普通字段 -->
                     <result column="${field.name}" property="${field.propertyName}"/>
                 </#if>
+            </#list>
+            <#list table.commonFields as field><#--生成公共字段 -->
+                <result column="${field.name}" property="${field.propertyName}"/>
             </#list>
         </resultMap>
 
@@ -29,29 +29,45 @@
     <#if baseColumnList>
         <!-- 通用查询结果列 -->
         <sql id="Base_Column_List">
-            <#list table.commonFields as field>
+            <#list table.fields as field>
                 ${field.name},
             </#list>
-            ${table.fieldNames}
+            <#list table.commonFields as field>
+                ${field.name}<#if field_has_next>,</#if>
+            </#list>
         </sql>
 
     </#if>
     <insert id="insert">
         INSERT INTO ${table.name}
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <#list table.commonFields as field>
+            <#list table.fields as field>
                 <#if !field.keyFlag><#--生成普通字段 -->
                     <if test="${field.propertyName} != null">
                         ${field.name},
                     </if>
                 </#if>
             </#list>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
             <#list table.commonFields as field>
                 <#if !field.keyFlag><#--生成普通字段 -->
                     <if test="${field.propertyName} != null">
+                        ${field.name}<#if field_has_next>,</#if>
+                    </if>
+                </#if>
+            </#list>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <#list table.fields as field>
+                <#if !field.keyFlag><#--生成普通字段 -->
+                    <if test="${field.propertyName} != null">
                         ${r'#{'}${field.propertyName}},
+                    </if>
+                </#if>
+            </#list>
+            <#list table.commonFields as field>
+                <#if !field.keyFlag><#--生成普通字段 -->
+                    <if test="${field.propertyName} != null">
+                        ${r'#{'}${field.propertyName}}<#if field_has_next>,</#if>
                     </if>
                 </#if>
             </#list>
@@ -64,13 +80,20 @@
         WHERE id = ${r'#{id}'}
     </update>
 
-    <update id="update">
+    <update id="updateById">
         UPDATE ${table.name}
         <set>
-            <#list table.commonFields as field>
+            <#list table.fields as field>
                 <#if !field.keyFlag><#--生成普通字段 -->
                     <if test="${field.propertyName} != null">
                         ${field.name} = ${r'#{'}${field.propertyName}},
+                    </if>
+                </#if>
+            </#list>
+            <#list table.commonFields as field>
+                <#if !field.keyFlag><#--生成普通字段 -->
+                    <if test="${field.propertyName} != null">
+                        ${field.name} = ${r'#{'}${field.propertyName}}<#if field_has_next>,</#if>
                     </if>
                 </#if>
             </#list>
@@ -81,15 +104,34 @@
 
     <insert id="batchInsert">
         INSERT INTO ${table.name}
-        (
-        <include refid="Base_Column_List"/>
-        )
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <#list table.fields as field>
+                <#if !field.keyFlag><#--生成普通字段 -->
+                    <if test="${field.propertyName} != null">
+                        ${field.name},
+                    </if>
+                </#if>
+            </#list>
+            <#list table.commonFields as field>
+                <#if !field.keyFlag><#--生成普通字段 -->
+                    <if test="${field.propertyName} != null">
+                        ${field.name}<#if field_has_next>,</#if>
+                    </if>
+                </#if>
+            </#list>
+        </trim>
         VALUES
         <foreach collection="list" item="item" open="(" separator="),(" close=")">
+            <#list table.fields as field>
+                <choose>
+                    <when test="item.${field.propertyName} != null">${r'#{item.'}${field.propertyName}},</when>
+                    <otherwise>DEFAULT,</otherwise>
+                </choose>
+            </#list>
             <#list table.commonFields as field>
                 <choose>
-                    <when test="item.${field.propertyName} != null">${r'#{'}${field.propertyName}},</when>
-                    <otherwise>DEFAULT ,</otherwise>
+                    <when test="item.${field.propertyName} != null">${r'#{item.'}${field.propertyName}},</when>
+                    <otherwise>DEFAULT<#if field_has_next>,</#if></otherwise>
                 </choose>
             </#list>
         </foreach>
@@ -99,6 +141,11 @@
         SELECT COUNT(*) FROM ${table.name}
         <where>
             del_flag = 0
+            <#list table.fields as field>
+                <if test="${field.propertyName} != null">
+                    AND ${field.name} = ${r'#{'}${field.propertyName}}
+                </if>
+            </#list>
             <#list table.commonFields as field>
                 <if test="${field.propertyName} != null">
                     AND ${field.name} = ${r'#{'}${field.propertyName}}
@@ -113,6 +160,11 @@
         FROM ${table.name}
         <where>
             del_flag = 0
+            <#list table.fields as field>
+                <if test="${field.propertyName} != null">
+                    AND ${field.name} = ${r'#{'}${field.propertyName}}
+                </if>
+            </#list>
             <#list table.commonFields as field>
                 <if test="${field.propertyName} != null">
                     AND ${field.name} = ${r'#{'}${field.propertyName}}
@@ -127,6 +179,11 @@
         FROM ${table.name}
         <where>
             del_flag = 0
+            <#list table.fields as field>
+                <if test="${field.propertyName} != null">
+                    AND ${field.name} = ${r'#{'}${field.propertyName}}
+                </if>
+            </#list>
             <#list table.commonFields as field>
                 <if test="${field.propertyName} != null">
                     AND ${field.name} = ${r'#{'}${field.propertyName}}
@@ -141,6 +198,11 @@
         FROM ${table.name}
         <where>
             del_flag = 0
+            <#list table.fields as field>
+                <if test="${field.propertyName} != null">
+                    AND ${field.name} = ${r'#{'}${field.propertyName}}
+                </if>
+            </#list>
             <#list table.commonFields as field>
                 <if test="${field.propertyName} != null">
                     AND ${field.name} = ${r'#{'}${field.propertyName}}

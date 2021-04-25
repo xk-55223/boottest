@@ -101,6 +101,6 @@
 
     <select id="listAllLogisticsService" resultMap="logisticsServiceResultMap">
         select <include refid="baseColumnList"/> from pw_logistics_service
-        where lang = 'zh';
+        where lang = 'zh' and del_flag = 1;
     </select>
 </mapper>

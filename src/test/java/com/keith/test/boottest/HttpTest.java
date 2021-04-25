@@ -23,13 +23,15 @@ public class HttpTest {
 
     @Test
     public void restTest() {
-        String forObject = restTemplate.getForObject("https://item.taobao.com/item.htm?spm=a230r.1.14.45.516a2262gi51bP&id=599269056085&ns=1&abbucket=17#detail", String.class);
+        String forObject = restTemplate.getForObject("https://laputa.1688.com/offer/ajax/CalculateFreight.do?callback=json&amount=2&price=10.9&templateId=10078456&memberId=b2b-2904881168e7288&offerId=641418039724&flow=general&excludeAreaCode4FreePostage=ALL&countryCode=1001&provinceCode=2614&cityCode=2654", String.class);
         System.out.println(forObject);
     }
 
     @Test
     public void testHttp() throws Exception {
-        String result = HttpClientUtil.httpGet("http://parcelway-cn-test-temp.oss-accelerate.aliyuncs.com/parcel/invoice/2020/11/12/invoice-b5f34183b30e54023cb277376ae3ac96-P1605150997.pdf", null, null);
+        HashMap<String, String> headerParam = new HashMap<>();
+        headerParam.put("refer","https://detail.1688.com/");
+        String result = HttpClientUtil.httpGet("https://laputa.1688.com/offer/ajax/CalculateFreight.do?callback=json&amount=2&price=10.9&templateId=10078456&memberId=b2b-2904881168e7288&offerId=641418039724&flow=general&excludeAreaCode4FreePostage=ALL&countryCode=1001&provinceCode=2614&cityCode=2654", headerParam, null);
         String base64 = Base64Utils.encodeToString(result.getBytes());
         System.out.println(base64);
     }
@@ -42,14 +44,14 @@ public class HttpTest {
         for (Object proxyObject : proxyList) {
             TaokeProxyDTO proxyDTO = JSON.parseObject(proxyObject.toString(), TaokeProxyDTO.class);
         }*/
-        Map<String, String> header = new HashMap<>();
+        /*Map<String, String> header = new HashMap<>();
         header.put("referer", "https://login.taobao.com/member/login.jhtml?redirectURL=https%3A%2F%2Fmember1.taobao.com%2Fmember%2Ffresh%2Faccount_security.htm%3Fspm%3D2013.1.754894437.5.24681ed0KKNpUJ");
         String url = "http://h5api.m.taobao.com/h5/mtop.taobao.detail.getdetail/6.0/?data=%7B%22itemNumId%22%3A%22603133486650%22%7D";
         for (int i = 0; i < 25; i++) {
             Thread.sleep(1000);
             String result = HttpClientUtil.httpGet(url, header, null);
             System.out.println("返回结果为" + result);
-        }
+        }*/
     }
 
 

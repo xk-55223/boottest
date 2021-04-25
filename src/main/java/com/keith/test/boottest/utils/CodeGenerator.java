@@ -19,7 +19,9 @@ import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -67,7 +69,7 @@ public class CodeGenerator {
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
-        dsc.setUrl("jdbc:mysql://localhost:3306/starit_parcelway?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai");
+        dsc.setUrl("jdbc:mysql://localhost:3306/dotdotbuy?useUnicode=true&useSSL=false&characterEncoding=utf8&serverTimezone=Asia/Shanghai");
         // dsc.setSchemaName("public");
         dsc.setDriverName("com.mysql.jdbc.Driver");
         dsc.setUsername("root");
@@ -84,41 +86,35 @@ public class CodeGenerator {
         InjectionConfig cfg = new InjectionConfig() {
             @Override
             public void initMap() {
-                // to do nothing
+                Map<String, Object> map = new HashMap<>();
+                //map.put("abc", this.getConfig().getGlobalConfig().getAuthor() + "-mp");
+                map.put("abc", "abcTestValue");
+                this.setMap(map);
             }
         };
-
-        // 如果模板引擎是 freemarker
-        String xmlTemplatePath = "mybatistemplate/mapper.xml.ftl";
-        String mapperTemplatePath = "mybatistemplate/mapper.java.ftl";
-        String entityTemplatePath = "mybatistemplate/entity.java.ftl";
-        String controllerTemplatePath = "mybatistemplate/controller.java.ftl";
-        String serviceTemplatePath = "mybatistemplate/service.java.ftl";
-        String serviceImplTemplatePath = "mybatistemplate/serviceImpl.java.ftl";
-        List<FileOutConfig> focList = getFileOutConfigs(projectPath, pc, xmlTemplatePath, mapperTemplatePath, entityTemplatePath, controllerTemplatePath, serviceTemplatePath, serviceImplTemplatePath);
 
         cfg.setFileCreate(new IFileCreate() {
             @Override
             public boolean isCreate(ConfigBuilder configBuilder, FileType fileType, String filePath) {
                 // 判断自定义文件夹是否需要创建
                 checkDir(filePath);
-                /*if (fileType == FileType.MAPPER) {
+                if (fileType == FileType.MAPPER) {
                     // 已经生成 mapper 文件判断存在，不想重新生成返回 false
                     return !new File(filePath).exists();
-                }*/
+                }
                 // 允许生成模板文件
                 return true;
             }
         });
+
+        List<FileOutConfig> focList = getFileOutConfigs(projectPath, pc);
         cfg.setFileOutConfigList(focList);
         mpg.setCfg(cfg);
 
         // 配置模板
         TemplateConfig templateConfig = new TemplateConfig();
-
         // 配置自定义输出模板
         //指定自定义模板路径，注意不要带上.ftl/.vm, 会根据使用的模板引擎自动识别
-        // templateConfig.setEntity("templates/entity2.java");
          templateConfig.setXml("mybatistemplate/mapper.xml");
          templateConfig.setMapper("mybatistemplate/mapper.java");
          templateConfig.setService("mybatistemplate/service.java");
@@ -126,7 +122,6 @@ public class CodeGenerator {
          templateConfig.setController("mybatistemplate/controller.java");
          templateConfig.setEntity("mybatistemplate/entity.java");
 
-        templateConfig.setXml(null);
         mpg.setTemplate(templateConfig);
 
         // 策略配置
@@ -134,26 +129,35 @@ public class CodeGenerator {
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setSuperEntityClass("com.keith.test.boottest.entity.BaseEntity");
+        // 使用lombok模板
         strategy.setEntityLombokModel(true);
         strategy.setRestControllerStyle(true);
         // 公共父类
 //        strategy.setSuperControllerClass("你自己的父类控制器,没有就不用设置!");
         // 写于父类中的公共字段
-        strategy.setSuperEntityColumns("id", "create_time", "update_time", "del_flag", "data_code", "create_by", "update_by");
+        strategy.setSuperEntityColumns("create_time", "update_time", "del_flag", "data_code", "create_by", "update_by");
         strategy.setInclude(scanner("表名，多个英文逗号分割").split(","));
         strategy.setControllerMappingHyphenStyle(true);
         strategy.setTablePrefix(pc.getModuleName() + "_");
-        strategy.setLogicDeleteFieldName("del_flag");
+        //strategy.setLogicDeleteFieldName("del_flag");
         strategy.setEntitySerialVersionUID(false);
         mpg.setStrategy(strategy);
+        // 如果模板引擎是 freemarker
         mpg.setTemplateEngine(new FreemarkerTemplateEngine());
         mpg.execute();
     }
 
-    private static List<FileOutConfig> getFileOutConfigs(String projectPath, PackageConfig pc, String xmlTemplatePath, String mapperTemplatePath, String entityTemplatePath, String controllerTemplatePath, String serviceTemplatePath, String serviceImplTemplatePath) {
+    private static List<FileOutConfig> getFileOutConfigs(String projectPath, PackageConfig pc) {
+        String mapperTemplatePath = "mybatistemplate/mapper.java.ftl";
+        String entityTemplatePath = "mybatistemplate/entity.java.ftl";
+        String controllerTemplatePath = "mybatistemplate/controller.java.ftl";
+        String serviceTemplatePath = "mybatistemplate/service.java.ftl";
+        String serviceImplTemplatePath = "mybatistemplate/serviceImpl.java.ftl";
+
         // 自定义输出配置
         List<FileOutConfig> focList = new ArrayList<>();
         // 自定义配置会被优先输出
+        String xmlTemplatePath = "mybatistemplate/mapper.xml.ftl";
         focList.add(new FileOutConfig(xmlTemplatePath) {
             @Override
             public String outputFile(TableInfo tableInfo) {

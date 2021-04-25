@@ -35,6 +35,7 @@ public class LogisticsServiceServiceImpl implements LogisticsServiceService {
 
     @Override
     public List<LogisticsService> listAllLogisticsService() {
+        log.info("要修改class才能生效吗");
         return logisticsServiceMapper.listAllLogisticsService();
     }
 

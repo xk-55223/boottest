@@ -7,6 +7,8 @@ import cn.afterturn.easypoi.excel.entity.ImportParams;
 import cn.afterturn.easypoi.excel.entity.params.ExcelExportEntity;
 import cn.afterturn.easypoi.handler.inter.IWriter;
 import cn.afterturn.easypoi.pdf.PdfExportUtil;
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.Font;
@@ -17,6 +19,7 @@ import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.keith.test.boottest.dto.LogisticsErrorCode;
 import com.keith.test.boottest.dto.TranslateTemplate;
 import com.keith.test.boottest.dto.YouDaoLangTemplate;
 import com.keith.test.boottest.entity.Help;
@@ -26,6 +29,8 @@ import com.keith.test.boottest.mapper.HelpMapper;
 import com.keith.test.boottest.mapper.LogisticsServiceMapper;
 import com.keith.test.boottest.utils.HttpClientUtil;
 import com.keith.test.boottest.utils.PdfUtil;
+import com.keith.test.boottest.utils.TranslateUtils;
+import com.keith.test.boottest.utils.UUIDGenerator;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -193,5 +198,35 @@ public class ExcelTest {
     @Test
     public void excel2pdf() throws Exception {
     }
+
+    /*@Test
+    public void genLogisticsErrorCode() {
+        List<LogisticsErrorCode> translateTemplates = importExcel("C:\\Users\\26914\\Desktop\\错误码导入20210325(已自动还原).xlsx", 1, LogisticsErrorCode.class);
+        for (LogisticsErrorCode translateTemplate : translateTemplates) {
+            translateTemplate.setEnMessage(TranslateUtils.translateSingle(translateTemplate.getErrorMessage(), "zh-CHS", "en"));
+        }
+
+        String errorSqlTemplate = "INSERT INTO `starit_frame_platform_rewrite`.`sys_error_code_config`(`error_code`, `lang`, `hint_code`, `hint_info`, `placeholder_count`, `code_desc`, `status`, `create_time`, `update_time`, `del_flag`, `data_code`, `create_by`, `update_by`) VALUES ";
+        String cnTemplate = "('#{uuid}', 'cn', '#{errorCode}', '#{errorMessage}', 0, NULL, 1, #{currTime}, #{currTime}, '0', '#{uuid}', 'keith', 'keith'),\r\n";
+        String enTemplate = "('#{uuid}', 'en', '#{errorCode}', '#{errorMessage}', 0, NULL, 1, #{currTime}, #{currTime}, '0', '#{uuid}', 'keith', 'keith'),\r\n";
+        StringBuilder result = new StringBuilder(errorSqlTemplate);
+        for (LogisticsErrorCode translateTemplate : translateTemplates) {
+            long timeMillis = System.currentTimeMillis();
+            result.append(cnTemplate.replace("#{uuid}", UUIDGenerator.getUUID())
+                    .replace("#{uuid}", UUIDGenerator.getUUID())
+                    .replace("#{errorCode}", translateTemplate.getErrorCode())
+                    .replace("#{errorMessage}", translateTemplate.getErrorMessage().replaceAll("\'", "\""))
+                    .replace("#{currTime}", String.valueOf(timeMillis))
+                    .replace("#{currTime}", String.valueOf(timeMillis)));
+            result.append(enTemplate.replace("#{uuid}", UUIDGenerator.getUUID())
+                    .replace("#{uuid}", UUIDGenerator.getUUID())
+                    .replace("#{errorCode}", translateTemplate.getErrorCode())
+                    .replace("#{errorMessage}", translateTemplate.getEnMessage().replaceAll("\'", "\""))
+                    .replace("#{currTime}", String.valueOf(timeMillis))
+                    .replace("#{currTime}", String.valueOf(timeMillis)));
+        }
+        result.deleteCharAt(result.length() - 1).append(";");
+        System.out.println(result.toString());
+    }*/
 
 }

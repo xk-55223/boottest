@@ -17,6 +17,7 @@ public class CommonTestController {
 
     @RequestMapping("/http-timeout")
     public String httpTimeOutTest() throws InterruptedException {
+        log.info("测试一下先");
         Thread.sleep(5000);
         return "true";
     }
