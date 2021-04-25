@@ -42,6 +42,9 @@ public interface ${table.mapperName} {
 
     /**
      * 批量插入
+     *
+     * @param params 批量数据
+     * @return 影响行数
      */
     int batchInsert(List<${entity}> record);
 
@@ -55,6 +58,7 @@ public interface ${table.mapperName} {
 
     /**
      * 分页查询
+     *
      */
     List<${entity}> selectPage();
 
